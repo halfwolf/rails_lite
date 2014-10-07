@@ -56,7 +56,7 @@ describe Phase5::Params do
     end
 
     it "handles nested keys" do
-      req.stub(:body) { "user[address][street]=main" }
+      req.stub(:body) { "user[address][street]=main&user[address][zip]=89436" }
       params = Phase5::Params.new(req)
       params["user"]["address"]["street"].should == "main"
     end

@@ -8,7 +8,7 @@ module Phase5
     # 3. route params
     def initialize(req, route_params = {})
       @params = {}
-
+      parse_www_encoded_form(req.body)
       parse_www_encoded_form(req.query_string)
     end
 
@@ -30,15 +30,32 @@ module Phase5
     # { "user" => { "address" => { "street" => "main", "zip" => "89436" } } }
     def parse_www_encoded_form(www_encoded_form)
       return nil unless www_encoded_form
+
       parameters = URI::decode_www_form(www_encoded_form)
       parameters.each_index do |idx|
-        @params[parameters[idx][0]] = parameters[idx][1]
+
+        nested = parse_key(parameters[idx][0])
+        unless nested.count == 1
+          base = { nested.pop => parameters[idx][1] }
+          until nested.count == 1
+            new_key = nested.pop
+            base = { new_key => base }
+          end
+
+          @params[nested.pop] = base
+        else
+          @params[nested.pop] = parameters[idx][1]
+        end
       end
+      # parameters.each_index do |idx|
+      #   @params[parameters[idx][0]] = parameters[idx][1]
+      # end
     end
 
     # this should return an array
     # user[address][street] should return ['user', 'address', 'street']
     def parse_key(key)
+      key.split(/\]\[|\[|\]/)
     end
   end
 end
