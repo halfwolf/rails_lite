@@ -42,14 +42,13 @@ module Phase5
             base = { new_key => base }
           end
 
-          @params[nested.pop] = base
+          base = {nested.pop => base}
+          @params = @params.deep_merge(base)
         else
-          @params[nested.pop] = parameters[idx][1]
+          base = { nested.pop => parameters[idx][1] }
+          @params = @params.deep_merge(base)
         end
       end
-      # parameters.each_index do |idx|
-      #   @params[parameters[idx][0]] = parameters[idx][1]
-      # end
     end
 
     # this should return an array
