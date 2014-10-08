@@ -7,7 +7,7 @@ module Phase5
     # 2. post body
     # 3. route params
     def initialize(req, route_params = {})
-      @params = {}
+      @params = {}.deep_merge(route_params)
       parse_www_encoded_form(req.body)
       parse_www_encoded_form(req.query_string)
     end
